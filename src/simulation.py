@@ -1,9 +1,10 @@
+# Created by Arijit Choudhury (arijit@cise.ufl.edu)
+
 import analyzer
 import node
 import time_converter
 import random
 import trust
-
 
 #time_slice = int(raw_input("Please enter the time slice value for encounter graph"\
 #                       +"(in hours: mail <arijit@cise.ufl.edu> for details): "))
