@@ -132,7 +132,6 @@ for encounter in encounters:
         
 user_list[users.index(expert)].is_expert = 1
 
-
 o = open(target+"/plotter.py",'w')
 o.write('import networkx as nx\n')
 o.write('import matplotlib.pyplot as plt\n')
