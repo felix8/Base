@@ -3,7 +3,7 @@ def enough_confidence(confidence, threshold):
     for val in confidence:
         actual = actual + val
     
-    if actual > 0:
+    if actual > 2:
         return 1
     else:
         return 0

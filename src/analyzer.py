@@ -70,6 +70,8 @@ def analyzePacket(simulation_time, incoming_packet, threshold, user_list, users,
             # send packet containing expert response to nbrs
             response = 0
             for encounter in encounters:
+                if encounter[1] not in users:
+                    continue
                 if encounter[2] == simulation_time:
                     if encounter[0] == this_user.user_id:
                         response = response + 1
@@ -95,6 +97,8 @@ def analyzePacket(simulation_time, incoming_packet, threshold, user_list, users,
             response = 0
             # epidemic flooding
             for encounter in encounters:
+                if encounter[1] not in users:
+                    continue
                 if encounter[2] == simulation_time:
                     if encounter[0] == this_user.user_id:
                         response = response + 1
@@ -143,6 +147,8 @@ def analyzePacket(simulation_time, incoming_packet, threshold, user_list, users,
                     return (source, destination, color)               
                 response = 0
                 for encounter in encounters:
+                    if encounter[1] not in users:
+                        continue
                     if encounter[2] == simulation_time:
                         if encounter[0] == this_user.user_id:
                             response = response + 1
@@ -174,6 +180,8 @@ def analyzePacket(simulation_time, incoming_packet, threshold, user_list, users,
                 
                 response = 0
                 for encounter in encounters:
+                    if encounter[1] not in users:
+                        continue
                     if encounter[2] == simulation_time:
                         if encounter[0] == this_user.user_id:
                             response = response + 1

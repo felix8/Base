@@ -31,12 +31,14 @@ locations = list(set(locations))
 # Contains class instances of User
 user_list = [node.User(user,len(users),len(locations)) for user in users]
 
-tags = (("football", locations[random.randint(0,len(locations)-1)]),\
-        ("study", locations[random.randint(0,len(locations)-1)]),\
-        ("eat", locations[random.randint(0,len(locations)-1)]))
+tags = (("comp_arch", locations[random.randint(0,len(locations)-1)]),\
+        ("machine_l", locations[random.randint(0,len(locations)-1)]),\
+        ("mobile_networking", locations[random.randint(0,len(locations)-1)]))
 
 # A python dictionary for quickly finding locations
 location_dict = dict([(locations[i],i) for i in range(len(locations))])
+
+print location_dict['cse119-win-ap350-1']
     
 # use training data to fill up user scores
 for line in lines:
@@ -73,10 +75,10 @@ for line in lines:
     user2 = int(arr[1])
     time_stamp = int(arr[2])
     time_unit = time_converter.unix_timestamp_convert(time_stamp, time_slice)
-    location = location_dict[arr[3]]
     time_units.append(time_unit)
-    
-    encounters.append((user1, user2, time_unit, location))
+    if arr[3] in locations:
+        location = location_dict[arr[3]]
+        encounters.append((user1, user2, time_unit, location))
 
 time_units.sort()
 
@@ -87,8 +89,8 @@ total_encounters = len(encounters)
 #while asker == expert:
 #    expert = encounters[random.randint(0,total_encounters-1)][0]
     
-asker = 3
-expert = 1
+asker = 47484
+expert = 9609
 
 # incoming packet:
 # [source, destination, asker, expert, TTL, question, answer,
@@ -101,7 +103,7 @@ print "\t1. source_id: source id of transmitting node"
 print "\t2. destination_id: destination id of receiving node"
 print "\t3. asker: user_id of asker (randomly generated for simulation: " +\
  str(asker) + ")"
-print "\t4. expert: user_id of expert (randomly generated for simulation: " +\
+print "\t4. experts: user_ids of experts (randomly generated for simulation: " +\
  str(expert) + ")"
 #ttl = int(raw_input("\t5. enter TTL(time-to-live): "))
 ttl = 4
@@ -115,22 +117,9 @@ print "\t11. ev_expert (array): Eigen value of expert"
 print "Placing packet in input message buffer of asker..."
 
 # epidemic flooding starting with asker
-question_tag = ("Where can we watch movies?", "movies")
+question_tag = ("Where is the next CISE lecture?", "lecture")
 user_list[users.index(asker)].questions.append(question_tag[0])
 
-for encounter in encounters:
-    # epidemic flooding
-    sent_list = []
-    if encounter[0] == asker:
-        if encounter[1] not in sent_list:
-            sent_list.append(encounter[1])
-        else:
-            continue
-        this_packet = (asker, encounter[1], asker, 0, ttl,\
-       question_tag[0], 0,[(question_tag[1],0)],\
-       [0],user_list[users.index(asker)].generate_ev(), [0])
-        user_list[users.index(encounter[1])].add_to_buffer(this_packet)
-        
 user_list[users.index(expert)].is_expert = 1
 
 o = open(target+"/plotter.py",'w')
@@ -138,6 +127,23 @@ o.write('import networkx as nx\n')
 o.write('import matplotlib.pyplot as plt\n')
 
 for time_unit in time_units:
+    for encounter in encounters:
+        # epidemic flooding
+        sent_list = []
+        if encounter[2] != time_unit:
+            continue
+        if encounter[1] not in users:
+            continue
+        if encounter[0] == asker:
+            if encounter[1] not in sent_list:
+                sent_list.append(encounter[1])
+            else:
+                continue
+            this_packet = (asker, encounter[1], asker, 0, ttl,\
+           question_tag[0], 0,[(question_tag[1],0)],\
+           [0],user_list[users.index(asker)].generate_ev(), [0])
+            user_list[users.index(encounter[1])].add_to_buffer(this_packet)
+    
     o.write('\nplt.clf()\n')
     o.write('G=nx.DiGraph()\n')
 
@@ -161,6 +167,9 @@ for time_unit in time_units:
     o.write("nx.draw_random(G)\n")
     o.write("plt.savefig('path_"+str(time_unit)+".png')")
 o.close()
+
+for user in user_list:
+    print user.user_id, str(len(user.input_msg_buffer))
 
 print "\n\nQuestion asked: '" + question_tag[0] + "' by Asker: " + str(asker)
 if len(user_list[users.index(asker)].answer_folder) > 0:

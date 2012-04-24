@@ -69,11 +69,11 @@ class User:
     def has_seen(self, expert, tag, threshold):
         count = 0
         for encounter in self.personal_encounter_log:
-            if tag[1] == encounter[0]:
+            if tag[1] == encounter[1]:
                 if expert == encounter[0]:
                     count = count + 1
-                else:
-                    count = count - 1
+#                else:
+#                    count = count - 1
                       
         if count > 0:
             return 1
